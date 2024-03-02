@@ -9,7 +9,7 @@ import (
 )
 
 type Repository interface {
-	GetUsersBirthdayToday() ([]User, error)
+	GetUsersBirthdayToday(currDate time.Time) ([]User, error)
 	GeneratePromo(promo Promo) error
 }
 
@@ -26,8 +26,10 @@ const PromoCodeLen = 3
 func (s service) GeneratePromo() {
 	fmt.Println("CRON Job Starting...")
 
+	currDate := time.Now()
+
 	// get users whos birthday today
-	users, err := s.repository.GetUsersBirthdayToday()
+	users, err := s.repository.GetUsersBirthdayToday(currDate)
 	if err != nil {
 		return
 	}
@@ -42,7 +44,6 @@ func (s service) GeneratePromo() {
 	for _, u := range users {
 		promoCode := util.GeneratePromoCode(PromoCodeLen)
 		promoAmount := util.GeneratePromoAmount()
-		currDate := time.Now()
 
 		promo := Promo{
 			UserId:    u.Id,
@@ -56,7 +57,7 @@ func (s service) GeneratePromo() {
 		if err != nil {
 			continue
 		}
-		log.Printf("%+v\n", u)
+		// log.Printf("%+v\n", u)
 		go sendNotification(u.Email)
 	}
 }

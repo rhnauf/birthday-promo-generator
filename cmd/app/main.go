@@ -10,7 +10,8 @@ import (
 	promo "github.com/rhnauf/birthday-promo-generator/internal/generate_promo"
 )
 
-const CronExpr = "*/1 * * * *"
+// const CronExpr = "*/1 * * * *" // 1 minute for testing purposes
+const CronExpr = "* * 1 * *" // daily
 
 func main() {
 	err := godotenv.Load()
@@ -27,10 +28,10 @@ func main() {
 	defer dbConn.Close()
 
 	// seed users table
-	err = seedUser(dbConn)
-	if err != nil {
-		panic(err)
-	}
+	// err = seedUser(dbConn)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	// start cron job
 	promo.Start(dbConn, CronExpr)

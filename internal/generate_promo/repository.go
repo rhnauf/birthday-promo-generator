@@ -14,7 +14,7 @@ func newRepository(db *sql.DB) repository {
 	return repository{db: db}
 }
 
-func (r repository) GetUsersBirthdayToday() ([]User, error) {
+func (r repository) GetUsersBirthdayToday(currDate time.Time) ([]User, error) {
 	qry := `
 		SELECT id, email, dob FROM users
 		WHERE
@@ -22,11 +22,8 @@ func (r repository) GetUsersBirthdayToday() ([]User, error) {
 			AND DATE_PART('MONTH', dob) = $2
 	`
 
-	currDate := time.Now()
 	day := currDate.Day()
-
-	// get month in number, March => 3
-	month := int(currDate.Month())
+	month := int(currDate.Month()) // get month in number, March => 3
 
 	rows, err := r.db.Query(qry, day, month)
 	if err != nil {
