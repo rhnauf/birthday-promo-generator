@@ -1,6 +1,9 @@
 package main
 
 import (
+	"database/sql"
+	"log"
+
 	"github.com/joho/godotenv"
 
 	"github.com/rhnauf/birthday-promo-generator/external/db"
@@ -10,13 +13,12 @@ import (
 const CronExpr = "*/1 * * * *"
 
 func main() {
-	// load env
 	err := godotenv.Load()
 	if err != nil {
 		panic(err)
 	}
 
-	// connect to db
+	// db connect
 	dbConn, err := db.NewDatabase()
 	if err != nil {
 		panic(err)
@@ -24,10 +26,38 @@ func main() {
 
 	defer dbConn.Close()
 
+	// seed users table
+	err = seedUser(dbConn)
+	if err != nil {
+		panic(err)
+	}
+
 	// start cron job
 	promo.Start(dbConn, CronExpr)
 
-	// bloc
+	// blocking
 	done := make(chan bool)
 	<-done
+}
+
+func seedUser(db *sql.DB) error {
+	qry := `
+		INSERT INTO users (email, dob)
+		VALUES
+		('user_1@gmail.com', '2000-03-02'),
+		('user_2@gmail.com', '2000-03-03'),
+		('user_3@gmail.com', '2000-03-04'),
+		('user_4@gmail.com', '2000-04-02'),
+		('user_5@gmail.com', '1999-03-02'),
+		('user_6@gmail.com', '1998-03-02');
+	`
+
+	_, err := db.Exec(qry)
+	if err != nil {
+		return err
+	}
+
+	log.Println("users table seeded successfully")
+
+	return nil
 }

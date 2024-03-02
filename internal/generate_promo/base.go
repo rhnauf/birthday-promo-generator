@@ -3,8 +3,9 @@ package generate_promo
 import "database/sql"
 
 func Start(db *sql.DB, cronExpr string) {
-	s := newService()
-	c := newCronJob(s, cronExpr)
+	repository := newRepository(db)
+	service := newService(repository)
+	handler := newCronJob(service, cronExpr)
 
-	c.RunCRON()
+	handler.RunCRON()
 }
