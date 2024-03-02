@@ -1,0 +1,11 @@
+-- +goose Up
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  email varchar(100) NOT NULL,
+  dob DATE NOT NULL
+);
+
+-- +goose Down
+DROP TABLE users;
