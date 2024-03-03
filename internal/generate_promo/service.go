@@ -69,6 +69,6 @@ and offload the server loads,
 but that is outside of the scope for this test I suppose, so I will just mock the sending message process
 */
 func sendNotification(target string) {
-	time.Sleep(2)
+	time.Sleep(2 * time.Second)
 	log.Printf("successfully send message to %s", target)
 }

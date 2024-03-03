@@ -11,7 +11,7 @@ import (
 )
 
 // const CronExpr = "*/1 * * * *" // 1 minute for testing purposes
-const CronExpr = "* * 1 * *" // daily
+const CronExpr = "* 0 * * *" // daily at 00:00 am
 
 func main() {
 	err := godotenv.Load()
@@ -28,10 +28,10 @@ func main() {
 	defer dbConn.Close()
 
 	// seed users table
-	// err = seedUser(dbConn)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	//err = seedUser(dbConn)
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	// start cron job
 	promo.Start(dbConn, CronExpr)
